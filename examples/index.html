@@ -225,8 +225,6 @@
     const svg = document.getElementById('canvas');
     const pathManager = new PathManager();
     const renderer = new SvgPathRenderer(svg, pathManager);
-      showAllHandles: false
-    });
 
     let currentMode = 'pen'; // 'pen', 'edit', or 'view'
     let penTool = null;
@@ -300,11 +298,22 @@
       if (currentMode === 'pen') {
         penTool.onMouseMove(mousePosition);
         
-        // Render preview line if drawing
+        // Render preview line or curve if drawing
         const currentPath = penTool.getCurrentPath();
         if (currentPath && currentPath.anchorPoints.length > 0 && penTool.getState() === PenToolState.Drawing) {
           const lastPoint = currentPath.anchorPoints[currentPath.anchorPoints.length - 1];
-          renderer.renderPreviewLine(lastPoint.position, mousePosition);
+          
+          // If last point has handleOut, show curve preview
+          if (lastPoint.handleOut?.visible) {
+            const handleOutPos = {
+              x: lastPoint.position.x + lastPoint.handleOut.position.x,
+              y: lastPoint.position.y + lastPoint.handleOut.position.y
+            };
+            // Use mouse position as control point 2 (curve comes straight into cursor)
+            renderer.renderPreviewCurve(lastPoint.position, handleOutPos, mousePosition, mousePosition);
+          } else {
+            renderer.renderPreviewLine(lastPoint.position, mousePosition);
+          }
         }
       } else {
         editMode.onMouseMove(mousePosition);

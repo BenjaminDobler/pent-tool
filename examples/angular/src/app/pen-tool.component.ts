@@ -130,11 +130,22 @@ export class PenToolComponent implements AfterViewInit {
     if (this.mode() === 'pen') {
       this.penTool.onMouseMove(pos);
       
-      // Render preview line if drawing
+      // Render preview line or curve if drawing
       const path = this.penTool.getCurrentPath();
       if (path && path.anchorPoints.length > 0 && this.penTool.getState() === PenToolState.Drawing) {
         const lastPoint = path.anchorPoints[path.anchorPoints.length - 1];
-        this.renderer.renderPreviewLine(lastPoint.position, pos);
+        
+        // If last point has handleOut, show curve preview
+        if (lastPoint.handleOut?.visible) {
+          const handleOutPos = {
+            x: lastPoint.position.x + lastPoint.handleOut.position.x,
+            y: lastPoint.position.y + lastPoint.handleOut.position.y
+          };
+          // Use mouse position as control point 2 (curve comes straight into cursor)
+          this.renderer.renderPreviewCurve(lastPoint.position, handleOutPos, pos, pos);
+        } else {
+          this.renderer.renderPreviewLine(lastPoint.position, pos);
+        }
       }
     } else {
       this.editMode.onMouseMove(pos);
