@@ -1,15 +1,23 @@
 {
-  "name": "@pent-tool/core",
+  "name": "@richapps/pen-tool",
   "version": "0.1.0",
   "description": "A TypeScript library for creating Figma-style pen tool with Bezier curves and SVG path manipulation",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.js"
+    }
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "keywords": [
     "pen-tool",
@@ -20,7 +28,15 @@
     "drawing",
     "figma"
   ],
-  "author": "",
+  "author": "Benjamin Dobler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BenjaminDobler/pent-tool.git"
+  },
+  "bugs": {
+    "url": "https://github.com/BenjaminDobler/pent-tool/issues"
+  },
+  "homepage": "https://github.com/BenjaminDobler/pent-tool#readme",
   "license": "MIT",
   "devDependencies": {
     "typescript": "^5.3.3",

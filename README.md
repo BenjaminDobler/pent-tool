@@ -1,5 +1,8 @@
 # Pen Tool Library
 
+[![npm version](https://badge.fury.io/js/@richapps%2Fpen-tool.svg)](https://www.npmjs.com/package/@richapps/pen-tool)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 A TypeScript library providing a Figma-style pen tool for creating and editing SVG paths with Bezier curves.
 
 ## Features
@@ -23,7 +26,7 @@ A TypeScript library providing a Figma-style pen tool for creating and editing S
 ## Installation
 
 ```bash
-npm install
+npm install @richapps/pen-tool
 ```
 
 ## Development
@@ -44,7 +47,7 @@ npm run type-check
 ### Simplest Example - Auto-Import Existing Paths
 
 ```typescript
-import { PathManager, EditMode, SvgPathRenderer } from '@pent-tool/core';
+import { PathManager, EditMode, SvgPathRenderer } from '@richapps/pen-tool';
 
 const svg = document.getElementById('canvas'); // Contains existing <path> elements
 const pathManager = new PathManager();
@@ -73,7 +76,7 @@ const paths = pathManager.importFromSVGElement(svgElement);
 #### SVG Renderer
 
 ```typescript
-import { PathManager, PenTool, SvgPathRenderer } from '@pent-tool/core';
+import { PathManager, PenTool, SvgPathRenderer } from '@richapps/pen-tool';
 
 // Setup
 const svg = document.getElementById('canvas');
@@ -105,7 +108,7 @@ svg.addEventListener('mouseup', (e) => {
 #### Canvas Renderer
 
 ```typescript
-import { PathManager, PenTool, CanvasPathRenderer } from '@pent-tool/core';
+import { PathManager, PenTool, CanvasPathRenderer } from '@richapps/pen-tool';
 
 // Setup
 const canvas = document.getElementById('canvas');

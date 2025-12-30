@@ -1,0 +1,19 @@
+# Source files
+src/
+examples/
+*.md
+!README.md
+
+# Config files
+tsconfig.json
+vite.config.ts
+.gitignore
+
+# Development
+node_modules/
+.DS_Store
+plan.md
+
+# Testing
+*.test.ts
+*.spec.ts
