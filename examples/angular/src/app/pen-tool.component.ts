@@ -264,6 +264,13 @@ export class PenToolComponent implements AfterViewInit {
     return path !== null && path.anchorPoints.length > 2;
   }
 
+  deletePath(pathId: string) {
+    if (!this.pathManager || !this.renderer) return;
+    this.pathManager.removePath(pathId);
+    this.renderer.update(this.pathManager);
+    this.updateState();
+  }
+
   private updateState() {
     if (!this.pathManager || !this.penTool) return;
     this.pathCount.set(this.pathManager.getAllPaths().length);

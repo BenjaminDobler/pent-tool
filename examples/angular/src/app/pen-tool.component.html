@@ -122,11 +122,16 @@
           @for (pathInfo of paths(); track pathInfo.id) {
             <div class="path-item">
               <div class="path-header">
-                <strong>Path {{ $index + 1 }}</strong>
-                <span class="badge">{{ pathInfo.pointCount }} points</span>
-                @if (pathInfo.closed) {
-                  <span class="badge closed">Closed</span>
-                }
+                <div class="path-info">
+                  <strong>Path {{ $index + 1 }}</strong>
+                  <span class="badge">{{ pathInfo.pointCount }} points</span>
+                  @if (pathInfo.closed) {
+                    <span class="badge closed">Closed</span>
+                  }
+                </div>
+                <button class="delete-btn" (click)="deletePath(pathInfo.id)" title="Delete path">
+                  🗑️
+                </button>
               </div>
               <div class="path-data">
                 <code>{{ pathInfo.svgPath }}</code>
