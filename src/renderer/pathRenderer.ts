@@ -194,13 +194,23 @@ export class SvgPathRenderer implements IPathRenderer {
   /**
    * Render handles for anchor points
    */
-  renderHandles(pathManager: PathManager): void {
+  renderHandles(pathManager: PathManager, currentDrawingPath?: VectorPath | null): void {
     this.handlesGroup.innerHTML = '';
 
     const paths = pathManager.getAllPaths();
     for (const path of paths) {
-      for (const point of path.anchorPoints) {
-        const showHandles = this.options.showAllHandles || point.selected;
+      for (let i = 0; i < path.anchorPoints.length; i++) {
+        const point = path.anchorPoints[i];
+        let showHandles = this.options.showAllHandles || point.selected;
+        
+        // If this is the current drawing path, only show handles for the last point (and current if being dragged)
+        if (!showHandles && currentDrawingPath && path.id === currentDrawingPath.id) {
+          const isLastPoint = i === path.anchorPoints.length - 1;
+          const isSecondToLast = i === path.anchorPoints.length - 2;
+          // Show handles for the last point and the one before it
+          showHandles = isLastPoint || (isSecondToLast && path.anchorPoints.length > 1);
+        }
+        
         if (showHandles) {
           this.renderPointHandles(point);
         }
@@ -398,9 +408,9 @@ export class SvgPathRenderer implements IPathRenderer {
   /**
    * Update the entire view
    */
-  update(pathManager: PathManager): void {
+  update(pathManager: PathManager, currentDrawingPath?: VectorPath | null): void {
     this.renderPaths(pathManager);
-    this.renderHandles(pathManager);
+    this.renderHandles(pathManager, currentDrawingPath);
     this.renderAnchorPoints(pathManager);
   }
 

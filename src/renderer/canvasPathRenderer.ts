@@ -182,12 +182,22 @@ export class CanvasPathRenderer implements IPathRenderer {
   /**
    * Render all handles
    */
-  renderHandles(pathManager: PathManager): void {
+  renderHandles(pathManager: PathManager, currentDrawingPath?: VectorPath | null): void {
     const paths = pathManager.getAllPaths();
     for (const path of paths) {
-      for (const point of path.anchorPoints) {
-        // Show handles if showAllHandles is true or point is selected
-        if (this.options.showAllHandles || point.selected) {
+      for (let i = 0; i < path.anchorPoints.length; i++) {
+        const point = path.anchorPoints[i];
+        let showHandles = this.options.showAllHandles || point.selected;
+        
+        // If this is the current drawing path, only show handles for the last point (and current if being dragged)
+        if (!showHandles && currentDrawingPath && path.id === currentDrawingPath.id) {
+          const isLastPoint = i === path.anchorPoints.length - 1;
+          const isSecondToLast = i === path.anchorPoints.length - 2;
+          // Show handles for the last point and the one before it
+          showHandles = isLastPoint || (isSecondToLast && path.anchorPoints.length > 1);
+        }
+        
+        if (showHandles) {
           this.renderHandle(point);
         }
       }
@@ -332,14 +342,14 @@ export class CanvasPathRenderer implements IPathRenderer {
   /**
    * Update the entire view
    */
-  update(pathManager: PathManager): void {
+  update(pathManager: PathManager, currentDrawingPath?: VectorPath | null): void {
     // Clear canvas
     const rect = this.canvas.getBoundingClientRect();
     this.ctx.clearRect(0, 0, rect.width, rect.height);
 
     // Render in order: paths, handles, anchor points, preview
     this.renderPaths(pathManager);
-    this.renderHandles(pathManager);
+    this.renderHandles(pathManager, currentDrawingPath);
     this.renderAnchorPoints(pathManager);
     this.renderPreviewElements();
   }

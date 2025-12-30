@@ -1,4 +1,4 @@
-import { Point } from '../core/types';
+import { Point, VectorPath } from '../core/types';
 import { PathManager } from '../core/path';
 
 export interface RenderOptions {
@@ -42,7 +42,7 @@ export interface IPathRenderer {
   /**
    * Render all handles
    */
-  renderHandles(pathManager: PathManager): void;
+  renderHandles(pathManager: PathManager, currentDrawingPath?: VectorPath | null): void;
 
   /**
    * Render a preview line
@@ -67,7 +67,7 @@ export interface IPathRenderer {
   /**
    * Update the entire view
    */
-  update(pathManager: PathManager): void;
+  update(pathManager: PathManager, currentDrawingPath?: VectorPath | null): void;
 
   /**
    * Clear all rendered elements

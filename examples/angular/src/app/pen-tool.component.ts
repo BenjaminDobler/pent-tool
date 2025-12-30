@@ -86,7 +86,7 @@ export class PenToolComponent implements AfterViewInit {
     // Initialize pen tool
     this.penTool = new PenTool(this.pathManager, {}, {
       onPathModified: (path: VectorPath) => {
-        this.renderer.update(this.pathManager);
+        this.renderer.update(this.pathManager, this.penTool.getCurrentPath());
         this.updateState();
       },
       onStateChange: (state: PenToolState) => {
@@ -106,13 +106,13 @@ export class PenToolComponent implements AfterViewInit {
     // Initialize edit mode
     this.editMode = new EditMode(this.pathManager, {
       onPathModified: (path: VectorPath) => {
-        this.renderer.update(this.pathManager);
+        this.renderer.update(this.pathManager, null);
         this.updateState();
       },
       onSelectionChange: (points: AnchorPoint[]) => {
         this.selectedPoints.set(points);
         this.renderer.setOptions({ showAllHandles: points.length > 0 });
-        this.renderer.update(this.pathManager);
+        this.renderer.update(this.pathManager, null);
       },
       onHoverPreview: (point: Point | null, path: VectorPath | null) => {
         this.renderer.renderHoverPreviewPoint(point);
@@ -120,7 +120,7 @@ export class PenToolComponent implements AfterViewInit {
     });
 
     // Initial render
-    this.renderer.update(this.pathManager);
+    this.renderer.update(this.pathManager, null);
     this.updateState();
   }
 
@@ -233,7 +233,7 @@ export class PenToolComponent implements AfterViewInit {
       this.renderer.setOptions({ showAllHandles: true });
       this.renderer.clearPreview();
       this.penTool.reset();
-      this.renderer.update(this.pathManager);
+      this.renderer.update(this.pathManager, null);
     } else if (this.mode() === 'edit') {
       this.setViewMode();
       return;
@@ -242,7 +242,7 @@ export class PenToolComponent implements AfterViewInit {
       this.mode.set('pen');
       this.toolState.set('IDLE');
       this.renderer.setOptions({ showAllHandles: false });
-      this.renderer.update(this.pathManager);
+      this.renderer.update(this.pathManager, this.penTool.getCurrentPath());
     }
     this.updateState();
   }
@@ -276,7 +276,7 @@ export class PenToolComponent implements AfterViewInit {
     const path = this.penTool.getCurrentPath();
     if (path) {
       this.pathManager.closePath(path);
-      this.renderer.update(this.pathManager);
+      this.renderer.update(this.pathManager, null);
       this.penTool.reset();
       this.updateState();
     }
@@ -291,7 +291,7 @@ export class PenToolComponent implements AfterViewInit {
   deletePath(pathId: string) {
     if (!this.pathManager || !this.renderer) return;
     this.pathManager.removePath(pathId);
-    this.renderer.update(this.pathManager);
+    this.renderer.update(this.pathManager, this.mode() === 'pen' ? this.penTool.getCurrentPath() : null);
     this.updateState();
   }
 

@@ -92,7 +92,7 @@ export class PenTool {
     this.isDragging = true;
     this.dragStartPoint = position;
 
-    // Check if clicking near the start point to close path
+    // Check if clicking near the start point to close path (only for current path)
     if (this.currentPath && this.currentPath.anchorPoints.length > 0) {
       const firstPoint = this.currentPath.anchorPoints[0];
       const distance = PointUtils.distance(position, firstPoint.position);
@@ -106,14 +106,70 @@ export class PenTool {
       }
     }
 
-    // Start a new path if none exists
+    // If no current path, check if clicking on an endpoint of any existing open path to continue it
     if (!this.currentPath) {
+      const allPaths = this.pathManager.getAllPaths();
+      for (const path of allPaths) {
+        if (!path.closed && path.anchorPoints.length > 0) {
+          const firstPoint = path.anchorPoints[0];
+          const lastPoint = path.anchorPoints[path.anchorPoints.length - 1];
+          
+          const distanceToFirst = PointUtils.distance(position, firstPoint.position);
+          const distanceToLast = PointUtils.distance(position, lastPoint.position);
+          
+          // Check if clicking on the last point (end of path) to continue
+          if (distanceToLast <= this.options.closePathThreshold) {
+            this.currentPath = path;
+            this.setState(PenToolState.Drawing);
+            this.isDragging = false;
+            this.dragStartPoint = null;
+            return;
+          }
+          
+          // Check if clicking on the first point (start of path) to continue from the beginning
+          if (distanceToFirst <= this.options.closePathThreshold) {
+            this.currentPath = path;
+            // Reverse the path so we add points at what was the start
+            this.reversePathDirection(path);
+            this.setState(PenToolState.Drawing);
+            this.isDragging = false;
+            this.dragStartPoint = null;
+            this.notifyPathModified();
+            return;
+          }
+        }
+      }
+      
+      // No endpoint clicked, start a new path
       this.currentPath = this.pathManager.createPath();
       this.setState(PenToolState.Drawing);
     }
   }
 
   /**
+   * Reverse the direction of a path (swap start and end, flip handles)
+   */
+  private reversePathDirection(path: VectorPath): void {
+    // Reverse the order of anchor points
+    path.anchorPoints.reverse();
+    
+    // Swap handleIn and handleOut for each point
+    for (const point of path.anchorPoints) {
+      const tempHandle = point.handleIn;
+      point.handleIn = point.handleOut;
+      point.handleOut = tempHandle;
+      
+      // Flip the handle directions (negate x and y)
+      if (point.handleIn) {
+        point.handleIn.position.x = -point.handleIn.position.x;
+        point.handleIn.position.y = -point.handleIn.position.y;
+      }
+      if (point.handleOut) {
+        point.handleOut.position.x = -point.handleOut.position.x;
+        point.handleOut.position.y = -point.handleOut.position.y;
+      }
+    }
+  }  /**
    * Handle mouse move event
    */
   onMouseMove(position: Point): void {
