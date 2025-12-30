@@ -94,6 +94,7 @@
         </div>
       </div>
     </div>
+
   </div>
 
   <div class="canvas-container">
@@ -107,5 +108,33 @@
       (mouseup)="onMouseUp($event)"
       (dblclick)="onDoubleClick($event)"
     ></svg>
+  </div>
+
+  <div class="sidebar right-sidebar">
+    <h1>📋 Paths</h1>
+
+    <div class="section">
+      <div class="section-title">All Paths ({{ paths().length }})</div>
+      <div class="paths-list">
+        @if (paths().length === 0) {
+          <div class="info">No paths drawn yet. Start drawing!</div>
+        } @else {
+          @for (pathInfo of paths(); track pathInfo.id) {
+            <div class="path-item">
+              <div class="path-header">
+                <strong>Path {{ $index + 1 }}</strong>
+                <span class="badge">{{ pathInfo.pointCount }} points</span>
+                @if (pathInfo.closed) {
+                  <span class="badge closed">Closed</span>
+                }
+              </div>
+              <div class="path-data">
+                <code>{{ pathInfo.svgPath }}</code>
+              </div>
+            </div>
+          }
+        }
+      </div>
+    </div>
   </div>
 </div>

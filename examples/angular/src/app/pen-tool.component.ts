@@ -1,4 +1,4 @@
-import { Component, signal, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, signal, computed, ElementRef, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { 
   PathManager, 
@@ -12,6 +12,14 @@ import {
 } from '../../../../src/index';
 
 type ToolMode = 'pen' | 'edit' | 'view';
+
+export interface PathInfo {
+  id: string;
+  path: VectorPath;
+  svgPath: string;
+  pointCount: number;
+  closed: boolean;
+}
 
 @Component({
   selector: 'app-pen-tool',
@@ -30,6 +38,24 @@ export class PenToolComponent implements AfterViewInit {
   pathCount = signal<number>(0);
   currentPath = signal<VectorPath | null>(null);
   selectedPoints = signal<AnchorPoint[]>([]);
+  pathVersion = signal<number>(0); // Increments on any path modification
+
+  // Computed signal with all path information including SVG data
+  paths = computed<PathInfo[]>(() => {
+    // Trigger recomputation when pathCount or pathVersion changes
+    this.pathCount();
+    this.pathVersion();
+    
+    if (!this.pathManager) return [];
+    
+    return this.pathManager.getAllPaths().map(path => ({
+      id: path.id,
+      path: path,
+      svgPath: this.pathManager.toSVGPath(path) || '',
+      pointCount: path.anchorPoints.length,
+      closed: path.closed
+    }));
+  });
 
   // Tool instances
   private pathManager!: PathManager;
@@ -242,6 +268,7 @@ export class PenToolComponent implements AfterViewInit {
     if (!this.pathManager || !this.penTool) return;
     this.pathCount.set(this.pathManager.getAllPaths().length);
     this.currentPath.set(this.penTool.getCurrentPath());
+    this.pathVersion.update(v => v + 1); // Increment version to trigger path list update
   }
 
   private setupKeyboardListeners() {

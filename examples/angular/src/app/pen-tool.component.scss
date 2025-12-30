@@ -14,6 +14,7 @@
 .container {
   display: flex;
   height: 100%;
+  overflow: hidden;
 }
 
 .sidebar {
@@ -22,6 +23,13 @@
   border-right: 1px solid #e0e0e0;
   padding: 20px;
   overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.right-sidebar {
+  border-right: none;
+  border-left: 1px solid #e0e0e0;
+  width: 320px;
 }
 
 .canvas-container {
@@ -129,4 +137,55 @@ h1 {
   border-radius: 3px;
   font-family: monospace;
   font-size: 10px;
+}
+.paths-list {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.path-item {
+  padding: 10px;
+  margin-bottom: 8px;
+  background: #f8f8f8;
+  border-radius: 6px;
+  font-size: 11px;
+}
+
+.path-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  flex-wrap: wrap;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 6px;
+  background: #e0e0e0;
+  color: #666;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.badge.closed {
+  background: #4caf50;
+  color: white;
+}
+
+.path-data {
+  padding: 6px;
+  background: white;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  overflow-x: auto;
+  
+  code {
+    font-family: 'Courier New', monospace;
+    font-size: 10px;
+    color: #333;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
 }
