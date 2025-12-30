@@ -5,6 +5,10 @@
 
 A TypeScript library providing a Figma-style pen tool for creating and editing SVG paths with Bezier curves.
 
+## 🎨 [Live Demo](https://benjamindobler.github.io/pen-tool/)
+
+Try the interactive Angular demo with all features!
+
 ## Features
 
 - ✅ **Auto-Import**: Automatically import and edit existing SVG paths
